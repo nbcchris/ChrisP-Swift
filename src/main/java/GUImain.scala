@@ -35,19 +35,14 @@ object GUImain extends JFXApp {
     println("Goodbye World") 
   }
   
-  
-  private val theRoot = new GridPane {
-    add(btn, 0, 0)
-    addColumn(1, btn1)
-  }
 
-  
   private val theScene = new Scene {
     fill = Black
-    content = new HBox {
-      children+=btn
-      children+=btn1
+    content = new GridPane {
+      add(btn, 0, 0)
+      addColumn(1, btn1)
     }
+
     //root = theRoot
   }
   stage.scene = theScene
