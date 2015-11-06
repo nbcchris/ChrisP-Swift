@@ -1,6 +1,6 @@
 
 
-package Entities
+
 
 import scalafx.beans.property.ObjectProperty
 

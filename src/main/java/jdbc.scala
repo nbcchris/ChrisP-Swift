@@ -1,6 +1,7 @@
 
 import java.sql.DriverManager
 import java.sql.Connection
+import scalafx.collections.ObservableBuffer
 
 
 class jdbc {
@@ -10,8 +11,8 @@ class jdbc {
   val username = "root"
   val password = "pass"
   var connection:Connection = null
-  var list:Array[Array[String]]//=Array(Array(null,null),Array(null,null),Array(null,null))
-  var pList:Array[Product]
+  var list:Array[Array[String]]=Array(Array(null,null),Array(null,null),Array(null,null))
+  val oList:ObservableBuffer[CustomerOrder]=ObservableBuffer[CustomerOrder]()
   
   def getEmployee {
     try {
@@ -47,21 +48,17 @@ class jdbc {
     list
   }
   
-  def makeProduct : Array[Product]={
+  def getOrders : ObservableBuffer[CustomerOrder]={
     try {
       Class.forName(driver)
       connection = DriverManager getConnection(url, username, password)
       val statement = connection createStatement()
-      val resultSet = statement.executeQuery("SELECT * FROM product")
-      var i = 0
+      val resultSet = statement.executeQuery("SELECT * FROM customerorder")
       while ( resultSet next ) {
-        val x = resultSet getInt("productid")
-        val y = resultSet getString("name")
-        val z = resultSet getFloat("price")
-        pList(i) = new Product(x,y,z)
+        oList += new CustomerOrder(resultSet.getInt(1),resultSet.getInt(3), resultSet.getInt(4))
       }
       connection close()
     } catch { case e : Throwable => e printStackTrace }
-    pList
+    oList
   }
 }

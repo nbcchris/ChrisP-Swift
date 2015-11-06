@@ -23,7 +23,7 @@ object GUImain extends JFXApp {
     
   val db = new jdbc()
   
-  db makeProduct
+
   
   stage = new PrimaryStage {
     title = "Test"
@@ -73,7 +73,8 @@ object GUImain extends JFXApp {
                 val user = userField.text.getValue
                 val pass = passField.text.getValue
                 if(verifyLogin(user, pass)){
-                  System.exit(0)
+                  val a = new CustomerOrders
+                  stage = a build
                 }
               }
             },
