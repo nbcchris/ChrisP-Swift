@@ -59,7 +59,6 @@ object GUImain extends JFXApp {
               color = DarkGreen
               radius = 25
               spread = 0.25
-
             }
           //fill = new LinearGradient(endX = 0, stops = Stops(Black, DarkGreen))
           margin= Insets(1,1,1,25)
