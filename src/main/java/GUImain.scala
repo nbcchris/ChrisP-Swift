@@ -23,6 +23,8 @@ object GUImain extends JFXApp {
     
   val db = new jdbc()
   
+  db makeProduct
+  
   stage = new PrimaryStage {
     title = "Test"
     
@@ -60,7 +62,7 @@ object GUImain extends JFXApp {
 
             }
           //fill = new LinearGradient(endX = 0, stops = Stops(Black, DarkGreen))
-          margin= Insets(1,1,1,10)
+          margin= Insets(1,1,1,25)
         },userField,passField,new HBox {
           children = Seq(
             new Button{
@@ -104,5 +106,4 @@ object GUImain extends JFXApp {
     }
     boole
   }
-  
 }

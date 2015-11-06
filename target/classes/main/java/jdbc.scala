@@ -3,7 +3,6 @@ import java.sql.DriverManager
 import java.sql.Connection
 
 
-
 class jdbc {
   
   val driver = "com.mysql.jdbc.Driver"
@@ -11,7 +10,8 @@ class jdbc {
   val username = "root"
   val password = "pass"
   var connection:Connection = null
-  var list:Array[Array[String]]=Array(Array(null,null),Array(null,null),Array(null,null))
+  var list:Array[Array[String]]//=Array(Array(null,null),Array(null,null),Array(null,null))
+  var pList:Array[Product]
   
   def getEmployee {
     try {
@@ -24,9 +24,9 @@ class jdbc {
         val name = resultSet getString("name")
         val user = resultSet getString("username")
         val pass = resultSet getString("password")
-        println("Product ID= " + num + "\nName: " + name + "\nUser: " + user + "\nPass: " + pass + "\n\n------------------\n")
-        connection close()
+        println("Employee ID= " + num + "\nName: " + name + "\nUser: " + user + "\nPass: " + pass + "\n\n------------------\n")
       }
+      connection close()
     } catch { case e : Throwable => e printStackTrace }
   }
 
@@ -45,5 +45,23 @@ class jdbc {
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     list
+  }
+  
+  def makeProduct : Array[Product]={
+    try {
+      Class.forName(driver)
+      connection = DriverManager getConnection(url, username, password)
+      val statement = connection createStatement()
+      val resultSet = statement.executeQuery("SELECT * FROM product")
+      var i = 0
+      while ( resultSet next ) {
+        val x = resultSet getInt("productid")
+        val y = resultSet getString("name")
+        val z = resultSet getFloat("price")
+        pList(i) = new Product(x,y,z)
+      }
+      connection close()
+    } catch { case e : Throwable => e printStackTrace }
+    pList
   }
 }
