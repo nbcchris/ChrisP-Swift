@@ -1,30 +1,39 @@
 
 package Application
 
-import scalafx.Includes._
+import Database.CustomerOrderSQL
+import Entities.CustomerOrder
+import javafx.scene.paint.ImagePattern
+import javafx.scene.shape.Rectangle
+import scalafx.Includes.handle
+import scalafx.Includes.jfxRectangle2sfx
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Insets
+import scalafx.geometry.Orientation
 import scalafx.scene.Scene
-import scalafx.scene.control.Label
+import scalafx.scene.control.Button
+import scalafx.scene.control.ComboBox
+import scalafx.scene.control.Separator
 import scalafx.scene.control.TableColumn
 import scalafx.scene.control.TableColumn.sfxTableColumn2jfx
 import scalafx.scene.control.TableView
-import scalafx.scene.effect.DropShadow
+import scalafx.scene.control.ToggleGroup
+import scalafx.scene.control.ToolBar
+import scalafx.scene.control.Tooltip
+import scalafx.scene.image.Image
+import scalafx.scene.image.Image.sfxImage2jfx
 import scalafx.scene.layout.HBox
 import scalafx.scene.layout.VBox
-import scalafx.scene.paint.Color.SeaGreen
 import scalafx.scene.paint.Color.PaleGreen
+import scalafx.scene.paint.Color.SeaGreen
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
-import scalafx.scene.control.Button
-import Entities.CustomerOrder
-import Database.CustomerOrderSQL
 
 
 /**
- * @author Crispy
+ * @author ChrisPoole
  * 
  * Customer Orders is the page containing a list of all Customer Orders where Employees
  * are able to claim orders to work on in other areas of the system
@@ -35,7 +44,7 @@ class CustomerOrders extends JFXApp {
   //Returns a new PrimaryStage
   def build : PrimaryStage={
     stage = new PrimaryStage {
-      title = "Order List"
+      title = "Customer Orders"
       
       
       //Connect to the database
@@ -43,94 +52,94 @@ class CustomerOrders extends JFXApp {
       //Pull all information about CustomerOrders and store in 'order' buffer
       val order : ObservableBuffer[CustomerOrder] = db.getOrders
       
+      def createRect(): Rectangle ={
+        val image = new Image("file:src/images/logo.png")
+        val rect = new Rectangle(0,0,80,80)
+        rect setFill(new ImagePattern(image))
+        rect
+      }
+      
+      val combo : ComboBox[String] = new ComboBox()
+      val options : ObservableBuffer[String] = ObservableBuffer[String]()
+        options += "Picked"
+        options += "Packed"
+        options += "Dispatched"
+        options += "Complete"
+        
+      combo.items = options
+      
+      val alignToggleGroup = new ToggleGroup()
+      val toolBar = new ToolBar {
+        content = List(
+          new Button {
+            id = "newButton"
+            graphic = createRect
+            tooltip = Tooltip("New Document... Ctrl+N")
+            onAction = handle {
+              val a = new Index
+              stage = a build
+            }
+          },
+          new Button {
+            id = "viewOrder"
+            text = "View Order"
+          },
+          new Button {
+            id = "claim"
+            text = "Claim Order"
+          },
+          new Separator {
+            orientation = Orientation.VERTICAL
+          },
+          combo,
+          new Button {
+            id = "changeStatus"
+            text = "Change Status"
+          }
+        )
+      }
+      
+      
       scene = new Scene {
         fill = new LinearGradient(endX = 0,stops = Stops(SeaGreen, PaleGreen))
+       
+        
+        println(options)
         
         //Arrange content in a Horizontal Box
-        content = new HBox {
+        content = new VBox{ 
           padding = Insets(3)
           children = Seq(
-              new VBox{
-                padding = Insets(0,20,0,20)
-                children = Seq(
-                  new Label{
-                    text = "Customer Orders"
-                    style = "-fx-font-size: 24pt"
-                    effect = new DropShadow {
-                      color = PaleGreen
-                      radius = 25
-                      spread = 0.25
+            toolBar,
+            new  HBox {
+              children = Seq(
+                //Table Creation
+                new TableView[CustomerOrder](order) {
+                  columns ++= List(
+                    new TableColumn[CustomerOrder, Int] {
+                    text = "Order ID" 
+                    cellValueFactory = { _.value.customerOrderId }
+                    prefWidth = 163
+                    },
+                  new TableColumn[CustomerOrder, Int]() {
+                    text = "Employee ID"
+                    cellValueFactory = { _.value.employeeId }
+                    prefWidth = 163
+                    },
+                  new TableColumn[CustomerOrder, Int] {
+                    text = "Status"
+                    cellValueFactory = { _.value.status }
+                    prefWidth = 163
+                    // Render the property value when it changes, 
+                    // including initial assignment
                     }
-                  },
-                  new Button{
-                    text = "View Order"
-                    style = "-fx-font-size: 12pt"
-                    padding=Insets(0,40,0,40)
-                    margin=Insets(10,0,0,38)
-                    onAction = handle{
-                      System exit(0)
-                    }
-                  },
-                  new Button{
-                    text = "Claim"
-                    style = "-fx-font-size: 12pt"
-                    padding=Insets(0,40,0,40)
-                    margin=Insets(10,0,0,58)
-                    onAction = handle{
-                      System exit(0)
-                    }
-                  },
-                  new Label{
-                    text = "Weclome ${USER}"
-                    wrapText = true
-                    style = "-fx-font-size: 10pt"
-                    effect = new DropShadow {
-                      color = PaleGreen
-                      radius = 25
-                      spread = 0.25
-                    }
-                  },
-                  new Label{
-                    text = "You currently have ${X} Orders claimed"
-                    style = "-fx-font-size: 10pt"
-                    effect = new DropShadow {
-                      color = PaleGreen
-                      radius = 25
-                      spread = 0.25
-                    }
-                  }
-                )
-              },
-              
-              //Table Creation
-              new TableView[CustomerOrder](order) {
-              columns ++= List(
-                new TableColumn[CustomerOrder, Int] {
-                  text = "Order ID" 
-                  cellValueFactory = { _.value.customerOrderId }
-                  prefWidth = 100
-                },
-                new TableColumn[CustomerOrder, Int]() {
-                  text = "Employee ID"
-                  cellValueFactory = { _.value.employeeId }
-                  prefWidth = 100
-                },
-                new TableColumn[CustomerOrder, Int] {
-                  text = "Status"
-                  cellValueFactory = { _.value.status }
-                  prefWidth = 100
-                  // Render the property value when it changes, 
-                  // including initial assignment
-                  }
+                  )
+                }//Table finished
               )
-            }//Table finished
-              
-              
-              
-              
+            }
           )
         }
-      }
+      }  
     }
    stage
   }

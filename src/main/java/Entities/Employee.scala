@@ -5,7 +5,11 @@ package Entities
 import scalafx.beans.property.ObjectProperty
 import scalafx.beans.property.StringProperty
 
-
+/**
+ * @author ChrisPoole
+ * 
+ * 
+ */
 class Employee (employeeId_ : Int, name_ : String, username_ : String, password_ : String) {
   val employeeId = new ObjectProperty[Int](this, "employeeId", employeeId_)
   val name = new StringProperty(this, "name", name_)

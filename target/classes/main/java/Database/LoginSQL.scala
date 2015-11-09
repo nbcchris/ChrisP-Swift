@@ -6,7 +6,11 @@ import Entities.CustomerOrder
 import scalafx.collections.ObservableBuffer
 import java.sql.DriverManager
 import java.sql.Connection
-
+/**
+ * @author ChrisPoole
+ * 
+ * 
+ */
 class LoginSQL {
   
   val db = new jdbc()

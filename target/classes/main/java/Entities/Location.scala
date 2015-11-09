@@ -5,7 +5,11 @@
 package Entities
 
 import scalafx.beans.property.ObjectProperty
-
+/**
+ * @author ChrisPoole
+ * 
+ * 
+ */
 class Location (locationId_ : Int, quantity_ : Int, productId_ : Int) {
   val employeeId = new ObjectProperty[Int](this, "locationId", locationId_)
   val name = new ObjectProperty[Int](this, "quantity", quantity_)

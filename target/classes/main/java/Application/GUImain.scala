@@ -26,14 +26,23 @@ import scalafx.scene.paint.Color.SeaGreen
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
 
+/**
+ * @author ChrisPoole
+ * 
+ * Main class for my application, this functions as the Login page and origin
+ * of my GUI - it leads from here to the rest of my application but retains
+ * the same PrimaryStage from this object throughout the rest of the Application
+ */
+ 
 object GUImain extends JFXApp {
     
   val db = new LoginSQL()
   
 
-  
+  //This PrimaryStage holds all GUI run in this application
+  //it updates by replacing its scene with that of another window
   stage = new PrimaryStage {
-    title = "Test"
+    title = "Warehouse Order Tracking Application"
     
     def createRect(): Rectangle ={
       val image = new Image("file:src/images/logo-white.png")
@@ -47,11 +56,13 @@ object GUImain extends JFXApp {
     scene = new Scene{  
       fill = new LinearGradient(endX = 0,stops = Stops(SeaGreen, PaleGreen))
       val userField = new TextField{
+          text = "mouse"
           promptText = "Username"
           margin=Insets(10)
         }
       
       var passField = new PasswordField{
+          text = "pass"
           promptText = "Password"
           margin=Insets(10)
         }
@@ -67,7 +78,6 @@ object GUImain extends JFXApp {
               radius = 25
               spread = 0.25
             }
-          //fill = new LinearGradient(endX = 0, stops = Stops(Black, DarkGreen))
           margin= Insets(1,1,1,25)
         },userField,passField,new HBox {
           children = Seq(
@@ -79,7 +89,7 @@ object GUImain extends JFXApp {
                 val user = userField.text.getValue
                 val pass = passField.text.getValue
                 if(verifyLogin(user, pass)){
-                  val a = new CustomerOrders
+                  val a = new Index
                   stage = a build
                 }
               }
@@ -100,6 +110,7 @@ object GUImain extends JFXApp {
     }
   }
   
+  //This method uses the data from the database to assess the users input for validity
   def verifyLogin(user: String, pass: String):Boolean={
     var i = 0
     var boole = false

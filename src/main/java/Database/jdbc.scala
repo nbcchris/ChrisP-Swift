@@ -6,7 +6,11 @@ import java.sql.Connection
 import scalafx.collections.ObservableBuffer
 import Entities.CustomerOrder
 
-
+/**
+ * @author ChrisPoole
+ * 
+ * 
+ */
 class jdbc {
   var connection:Connection = null
   

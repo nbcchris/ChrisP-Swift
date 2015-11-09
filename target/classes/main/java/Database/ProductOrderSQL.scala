@@ -1,7 +1,11 @@
 
 
 package Database
-
+/**
+ * @author ChrisPoole
+ * 
+ * 
+ */
 import Entities.ProductOrder
 import scalafx.collections.ObservableBuffer
 import java.sql.Connection
@@ -17,7 +21,7 @@ class ProductOrderSQL {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT * FROM productorder")
       while ( resultSet next ) {
-        oList += new ProductOrder(resultSet.getInt(1),resultSet.getInt(2), resultSet.getInt(3))
+        oList += new ProductOrder(resultSet.getInt(1),resultSet.getInt(3), resultSet.getInt(4))
       }
       connection close()
     } catch { case e : Throwable => e printStackTrace }
