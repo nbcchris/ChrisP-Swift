@@ -70,7 +70,7 @@ class ProductOrders extends JFXApp {
         options += "Dispatched"
         options += "Received"
         options += "Processed"
-        
+        combo.promptText="Pick a Status"
         combo.items = options
         
         val toolBar = new ToolBar {

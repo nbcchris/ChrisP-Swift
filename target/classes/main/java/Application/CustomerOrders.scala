@@ -107,7 +107,7 @@ class CustomerOrders extends JFXApp {
           new Button {
             id = "newButton"
             graphic = createRect
-            tooltip = Tooltip("New Document... Ctrl+N")
+            tooltip = Tooltip("Back to Index")
             onAction = handle {
               val a = new Index
               stage = a build

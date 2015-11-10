@@ -16,6 +16,7 @@ class CustomerOrderSQL {
   val db = new jdbc()
   
  def getOrders : ObservableBuffer[CustomerOrder]={
+   
     val connection : Connection = db connect()
     val oList:ObservableBuffer[CustomerOrder]=ObservableBuffer[CustomerOrder]()
     try {
@@ -41,5 +42,21 @@ class CustomerOrderSQL {
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     oList(0)
+  }
+  
+  def findLinesById(orderId : Int) : ObservableBuffer[Int]={
+    val connection : Connection = db connect()
+    val oList:ObservableBuffer[Int]=ObservableBuffer[Int]()
+    
+    try {
+      val statement = connection createStatement()
+      val resultSet = statement.executeQuery("SELECT product_productid FROM customerorderline WHERE customerorder_customerorderid ="+orderId)
+      while ( resultSet next ) {
+         oList += resultSet.getInt(1)
+      }
+      connection close()
+    } catch { case e : Throwable => e printStackTrace }
+    
+    oList
   }
 }
