@@ -46,12 +46,43 @@ class CustomerOrders extends JFXApp {
     stage = new PrimaryStage {
       title = "Customer Orders"
       
-      
+      var coid = 0
+
       //Connect to the database
       val db = new CustomerOrderSQL()
+      
       //Pull all information about CustomerOrders and store in 'order' buffer
       val order : ObservableBuffer[CustomerOrder] = db.getOrders
       
+      val table =  new TableView[CustomerOrder](order){
+                  columns ++= List(
+                    new TableColumn[CustomerOrder, Int] {
+                      text = "Order ID" 
+                      cellValueFactory = { _.value.customerOrderId }
+                      prefWidth = 163
+                    },
+                    new TableColumn[CustomerOrder, Int]() {
+                      text = "Employee ID"
+                      cellValueFactory = { _.value.employeeId }
+                      prefWidth = 163
+                      },
+                    new TableColumn[CustomerOrder, String] {
+                      text = "Status"
+                      cellValueFactory = { _.value.status }
+                      prefWidth = 163
+                    }
+                  )
+                }
+      
+      table.onMouseClicked = handle {
+        try{
+          coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
+        }catch{
+          case e : Throwable => e printStackTrace
+        }
+      }
+      
+      //creates image bound
       def createRect(): Rectangle ={
         val image = new Image("file:src/images/logo.png")
         val rect = new Rectangle(0,0,80,80)
@@ -59,15 +90,17 @@ class CustomerOrders extends JFXApp {
         rect
       }
       
+      //Create Combobox and populate
       val combo : ComboBox[String] = new ComboBox()
       val options : ObservableBuffer[String] = ObservableBuffer[String]()
         options += "Picked"
         options += "Packed"
         options += "Dispatched"
         options += "Complete"
-        
+      combo.promptText = "Pick a Status"
       combo.items = options
       
+      //Create Toolbar
       val alignToggleGroup = new ToggleGroup()
       val toolBar = new ToolBar {
         content = List(
@@ -83,6 +116,10 @@ class CustomerOrders extends JFXApp {
           new Button {
             id = "viewOrder"
             text = "View Order"
+            onMouseClicked = handle{
+              val a = new Order(coid)
+              stage = a build
+            }
           },
           new Button {
             id = "claim"
@@ -99,12 +136,9 @@ class CustomerOrders extends JFXApp {
         )
       }
       
-      
+      //Begin Scene construction
       scene = new Scene {
         fill = new LinearGradient(endX = 0,stops = Stops(SeaGreen, PaleGreen))
-       
-        
-        println(options)
         
         //Arrange content in a Horizontal Box
         content = new VBox{ 
@@ -113,28 +147,9 @@ class CustomerOrders extends JFXApp {
             toolBar,
             new  HBox {
               children = Seq(
+                  table
                 //Table Creation
-                new TableView[CustomerOrder](order) {
-                  columns ++= List(
-                    new TableColumn[CustomerOrder, Int] {
-                    text = "Order ID" 
-                    cellValueFactory = { _.value.customerOrderId }
-                    prefWidth = 163
-                    },
-                  new TableColumn[CustomerOrder, Int]() {
-                    text = "Employee ID"
-                    cellValueFactory = { _.value.employeeId }
-                    prefWidth = 163
-                    },
-                  new TableColumn[CustomerOrder, Int] {
-                    text = "Status"
-                    cellValueFactory = { _.value.status }
-                    prefWidth = 163
-                    // Render the property value when it changes, 
-                    // including initial assignment
-                    }
-                  )
-                }//Table finished
+               //Table finished
               )
             }
           )
