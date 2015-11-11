@@ -84,7 +84,6 @@ class Index(user : String) extends JFXApp {
             }
           )
         }
-        //content += pic
       }
     }
     stage
