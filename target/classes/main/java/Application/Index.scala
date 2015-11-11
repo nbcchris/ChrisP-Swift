@@ -18,7 +18,7 @@ import scalafx.Includes._
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 
-class Index extends JFXApp {
+class Index(user : String) extends JFXApp {
   def build : PrimaryStage={
     stage = new PrimaryStage {
       title = "Index"
@@ -49,7 +49,7 @@ class Index extends JFXApp {
               text = "Customer Orders"
               style = "-fx-font-size: 14pt"
               onAction = handle {
-                val a = new CustomerOrders
+                val a = new CustomerOrders(user)
                 stage = a build
               }
             },new Button {
@@ -59,7 +59,7 @@ class Index extends JFXApp {
               margin = Insets(5,150,5,150)
               text = "Product Orders"
               onAction = handle {
-                val a = new ProductOrders
+                val a = new ProductOrders(user)
                 stage = a build
               }
             },new Button {
@@ -69,7 +69,7 @@ class Index extends JFXApp {
               text = "Travelling Salesman"
               minWidth = 200
               onAction = handle {
-                val a = new Salesman
+                val a = new Salesman(user)
                 stage = a build
               }
             },new Button {

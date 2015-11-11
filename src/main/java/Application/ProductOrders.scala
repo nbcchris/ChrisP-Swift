@@ -20,6 +20,7 @@ import scalafx.scene.paint.Stops
 import scalafx.scene.control.Button
 import Entities.ProductOrder
 import Database.ProductOrderSQL
+import Database.EmployeeSQL
 import scalafx.scene.shape.Circle
 import scalafx.scene.control.ToolBar
 import scalafx.scene.control.ToggleGroup
@@ -40,7 +41,7 @@ import scalafx.scene.control.ComboBox
  * 
  * 
  */
-class ProductOrders extends JFXApp {
+class ProductOrders(user : String) extends JFXApp {
 
   //method used to replace the PrimaryStage of the application and display new content
   //Returns a new PrimaryStage
@@ -48,9 +49,10 @@ class ProductOrders extends JFXApp {
     stage = new PrimaryStage {
       title = "Product Orders"
       
-      
+      var coid = 0
       //Connect to the database
       val db = new ProductOrderSQL()
+      val empdb = new EmployeeSQL()
       //Pull all information about ProductOrders and store in 'order' buffer
       val order : ObservableBuffer[ProductOrder] = db getOrders
       
@@ -78,19 +80,29 @@ class ProductOrders extends JFXApp {
           new Button {
             id = "newButton"
             graphic = createRect
-            tooltip = Tooltip("New Document... Ctrl+N")
+            tooltip = Tooltip("Back to Index")
             onAction = handle {
-              val a = new Index
+              val a = new Index(user)
               stage = a build
             }
           },
           new Button {
             id = "viewOrder"
             text = "View Order"
+            onMouseClicked = handle{
+              val a = new POrder(user, coid)
+              stage = a build
+            }
           },
           new Button {
             id = "claim"
             text = "Claim Order"
+            onMouseClicked = handle {
+              val userid = empdb getId(user)
+              db claim(coid, userid)
+              val a = new ProductOrders(user)
+              stage = a build
+            }
           },
           new Separator {
             orientation = Orientation.VERTICAL
@@ -99,112 +111,22 @@ class ProductOrders extends JFXApp {
           new Button {
             id = "changeStatus"
             text = "Change Status"
+            onMouseClicked = handle {
+              val selected = combo.value.value
+              if(selected != null){
+                db updateStatus(coid,selected)
+                val a = new ProductOrders(user)
+                stage = a build
+              }
+            }
           }
         )
       }
         
-        /*
-        val alignToggleGroup = new ToggleGroup()
-        val toolBar = new ToolBar {
-          content = List(
-            new Button {
-              id = "newButton"
-              graphic = createRect
-              tooltip = Tooltip("New Document... Ctrl+N")
-              onAction = handle {
-                val a = new Index
-                stage = a build
-              }
-            },
-            new Button {
-              id = "editButton"
-              text = "Customer Orders"
-            },
-            new Button {
-              id = "deleteButton"
-              text = "Product Orders"
-              graphic = new Circle {
-                fill = Blue
-                radius = 8
-              }
-            },
-            new Separator {
-              orientation = Orientation.VERTICAL
-            },
-            new ToggleButton {
-              id = "boldButton"
-              graphic = new Circle {
-                fill = Maroon
-                radius = 8
-              }
-              onAction = {
-                e: ActionEvent =>
-                  val tb = e.getTarget.asInstanceOf[javafx.scene.control.ToggleButton]
-                  print(e.eventType + " occurred on ToggleButton " + tb.id)
-                  print(", and selectedProperty is: ")
-                  println(tb.selectedProperty.value)
-              }
-            },
-            new ToggleButton {
-              id = "italicButton"
-              graphic = new Circle {
-                fill = Yellow
-                radius = 8
-              }
-              onAction = {
-                e: ActionEvent =>
-                  val tb = e.getTarget.asInstanceOf[javafx.scene.control.ToggleButton]
-                  print(e.eventType + " occurred on ToggleButton " + tb.id)
-                  print(", and selectedProperty is: ")
-                  println(tb.selectedProperty.value)
-              }
-            },
-            new Separator {
-              orientation = Orientation.VERTICAL
-            },
-            new ToggleButton {
-              id = "leftAlignButton"
-              toggleGroup = alignToggleGroup
-              graphic = new Circle {
-                fill = Purple
-                radius = 8
-              }
-            },
-            new ToggleButton {
-              toggleGroup = alignToggleGroup
-              id = "centerAlignButton"
-              graphic = new Circle {
-                fill = Orange
-                radius = 8
-              }
-            },
-            new ToggleButton {
-              toggleGroup = alignToggleGroup
-              id = "rightAlignButton"
-              graphic = new Circle {
-                fill = Cyan
-                radius = 8
-              }
-            }
-          )
-        }
-    
-        alignToggleGroup.selectToggle(alignToggleGroup.toggles(0))
-        alignToggleGroup.selectedToggle.onChange {
-          val tb = alignToggleGroup.selectedToggle.get.asInstanceOf[javafx.scene.control.ToggleButton]
-          println(tb.id() + " selected")
-        }*/
-        
-        
-        //Arrange content in a Horizontal Box
-        content = new VBox {
-          padding = Insets(3)
-          children = Seq(
-              
-              toolBar,
-              
-              //Table Creation
-              new TableView[ProductOrder](order) {
+      def buildTable: TableView[ProductOrder]={
+        val order : ObservableBuffer[ProductOrder] = db.getOrders
+      
+        val table =  new TableView[ProductOrder](order) {
               columns ++= List(
                 new TableColumn[ProductOrder, Int] {
                   text = "Order ID" 
@@ -216,7 +138,7 @@ class ProductOrders extends JFXApp {
                   cellValueFactory = { _.value.employeeId }
                   prefWidth = 163
                 },
-                new TableColumn[ProductOrder, Int] {
+                new TableColumn[ProductOrder, String] {
                   text = "Status"
                   cellValueFactory = { _.value.status }
                   prefWidth = 163
@@ -225,6 +147,27 @@ class ProductOrders extends JFXApp {
                   }
               )
             }//Table finished
+        
+        table.onMouseClicked = handle {
+          try{
+            coid = table.getSelectionModel.selectedItemProperty.get.productOrderId.value
+          }catch{
+            case e : Throwable => e printStackTrace
+          }
+        }
+        table
+      }
+        
+        
+        //Arrange content in a Horizontal Box
+        content = new VBox {
+          padding = Insets(3)
+          children = Seq(
+              
+              toolBar,
+              
+              //Table Creation
+              buildTable
               
               
               

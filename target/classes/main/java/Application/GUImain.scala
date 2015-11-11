@@ -89,7 +89,7 @@ object GUImain extends JFXApp {
                 val user = userField.text.getValue
                 val pass = passField.text.getValue
                 if(verifyLogin(user, pass)){
-                  val a = new Index
+                  val a = new Index(user)
                   stage = a build
                 }
               }

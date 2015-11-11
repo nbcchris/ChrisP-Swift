@@ -18,7 +18,7 @@ import scalafx.Includes._
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 
-class Salesman extends JFXApp {
+class Salesman(user : String) extends JFXApp {
   def build : PrimaryStage={
     stage = new PrimaryStage {
       title = "Travelling Salesman"
@@ -55,7 +55,7 @@ class Salesman extends JFXApp {
               style = "-fx-font-size: 14pt"
               text = "Take me back"
               onAction = handle {
-                val a = new Index
+                val a = new Index(user)
                 stage = a build
               }
             }

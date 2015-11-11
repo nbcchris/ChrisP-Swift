@@ -2,6 +2,7 @@
 package Application
 
 import Database.CustomerOrderSQL
+import Database.EmployeeSQL
 import Entities.CustomerOrder
 import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
@@ -38,7 +39,7 @@ import scalafx.scene.paint.Stops
  * Customer Orders is the page containing a list of all Customer Orders where Employees
  * are able to claim orders to work on in other areas of the system
  */
-class CustomerOrders extends JFXApp {
+class CustomerOrders(user : String) extends JFXApp {
 
   //method used to replace the PrimaryStage of the application and display new content
   //Returns a new PrimaryStage
@@ -50,38 +51,42 @@ class CustomerOrders extends JFXApp {
 
       //Connect to the database
       val db = new CustomerOrderSQL()
+      val empdb = new EmployeeSQL()
       
       //Pull all information about CustomerOrders and store in 'order' buffer
-      val order : ObservableBuffer[CustomerOrder] = db.getOrders
       
-      val table =  new TableView[CustomerOrder](order){
-                  columns ++= List(
-                    new TableColumn[CustomerOrder, Int] {
-                      text = "Order ID" 
-                      cellValueFactory = { _.value.customerOrderId }
-                      prefWidth = 163
-                    },
-                    new TableColumn[CustomerOrder, Int]() {
-                      text = "Employee ID"
-                      cellValueFactory = { _.value.employeeId }
-                      prefWidth = 163
-                      },
-                    new TableColumn[CustomerOrder, String] {
-                      text = "Status"
-                      cellValueFactory = { _.value.status }
-                      prefWidth = 163
-                    }
-                  )
-                }
+      def buildTable: TableView[CustomerOrder]={
+        val order : ObservableBuffer[CustomerOrder] = db.getOrders
       
-      table.onMouseClicked = handle {
-        try{
-          coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
-        }catch{
-          case e : Throwable => e printStackTrace
+        val table =  new TableView[CustomerOrder](order){
+          columns ++= List(
+            new TableColumn[CustomerOrder, Int] {
+              text = "Order ID" 
+              cellValueFactory = { _.value.customerOrderId }
+              prefWidth = 163
+            },
+            new TableColumn[CustomerOrder, Int]() {
+              text = "Employee ID"
+              cellValueFactory = { _.value.employeeId }
+              prefWidth = 163
+              },
+            new TableColumn[CustomerOrder, String] {
+              text = "Status"
+              cellValueFactory = { _.value.status }
+              prefWidth = 163
+            }
+          )
         }
+        
+        table.onMouseClicked = handle {
+          try{
+            coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
+          }catch{
+            case e : Throwable => e printStackTrace
+          }
+        }
+        table
       }
-      
       //creates image bound
       def createRect(): Rectangle ={
         val image = new Image("file:src/images/logo.png")
@@ -101,7 +106,6 @@ class CustomerOrders extends JFXApp {
       combo.items = options
       
       //Create Toolbar
-      val alignToggleGroup = new ToggleGroup()
       val toolBar = new ToolBar {
         content = List(
           new Button {
@@ -109,7 +113,7 @@ class CustomerOrders extends JFXApp {
             graphic = createRect
             tooltip = Tooltip("Back to Index")
             onAction = handle {
-              val a = new Index
+              val a = new Index(user)
               stage = a build
             }
           },
@@ -117,13 +121,19 @@ class CustomerOrders extends JFXApp {
             id = "viewOrder"
             text = "View Order"
             onMouseClicked = handle{
-              val a = new Order(coid)
+              val a = new Order(user, coid)
               stage = a build
             }
           },
           new Button {
             id = "claim"
             text = "Claim Order"
+            onMouseClicked = handle {
+              val userid = empdb getId(user)
+              db claim(coid, userid)
+              val a = new CustomerOrders(user)
+              stage = a build
+            }
           },
           new Separator {
             orientation = Orientation.VERTICAL
@@ -132,6 +142,14 @@ class CustomerOrders extends JFXApp {
           new Button {
             id = "changeStatus"
             text = "Change Status"
+            onMouseClicked = handle {
+              val selected = combo.value.value
+              if(selected != null){
+                db updateStatus(coid,selected)
+                val a = new CustomerOrders(user)
+                stage = a build
+              }
+            }
           }
         )
       }
@@ -147,7 +165,7 @@ class CustomerOrders extends JFXApp {
             toolBar,
             new  HBox {
               children = Seq(
-                  table
+                  buildTable
                 //Table Creation
                //Table finished
               )

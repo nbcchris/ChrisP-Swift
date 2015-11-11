@@ -59,4 +59,26 @@ class CustomerOrderSQL {
     
     oList
   }
+  
+  def updateStatus(orderId : Int, status : String){
+    val connection : Connection = db connect()
+    val oList:ObservableBuffer[Int]=ObservableBuffer[Int]()
+    
+    try {
+      val statement = connection createStatement()
+      val resultSet = statement.executeUpdate("UPDATE customerorder SET status = '"+status+"' WHERE `customerorderid`="+orderId)
+      connection close()
+    } catch { case e : Throwable => e printStackTrace }
+  }
+  
+  def claim(orderId: Int, userid: Int){
+    val connection : Connection = db connect()
+    val oList:ObservableBuffer[Int]=ObservableBuffer[Int]()
+    
+    try {
+      val statement = connection createStatement()
+      val resultSet = statement.executeUpdate("UPDATE customerorder SET employee_employeeid = '"+userid+"' WHERE `customerorderid`="+orderId)
+      connection close()
+    } catch { case e : Throwable => e printStackTrace }
+  }
 }

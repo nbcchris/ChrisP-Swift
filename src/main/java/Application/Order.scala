@@ -23,7 +23,7 @@ import scalafx.geometry.Pos
 import scalafx.collections.ObservableBuffer
 import Database.ProductSQL
 
-class Order (orderId_ : Int) extends JFXApp{
+class Order (user : String, orderId_ : Int) extends JFXApp{
   
   
   def build : PrimaryStage={
@@ -45,7 +45,7 @@ class Order (orderId_ : Int) extends JFXApp{
           style = "-fx-font-size: 14pt"
           margin = Insets(80,0,0,130)
           onAction = handle{
-              val a = new CustomerOrders
+              val a = new CustomerOrders(user)
               stage = a build
           }
         },2,6)
@@ -69,7 +69,7 @@ class Order (orderId_ : Int) extends JFXApp{
           style = "-fx-font-size: 14pt"
           margin = Insets(80,0,0,130)
           onAction = handle{
-              val a = new CustomerOrders
+              val a = new CustomerOrders(user)
               stage = a build
           }
         },2,6)
