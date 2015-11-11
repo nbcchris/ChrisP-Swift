@@ -112,7 +112,7 @@ object GUImain extends JFXApp {
   
   //This method uses the data from the database to assess the users input for validity
   def verifyLogin(user: String, pass: String):Boolean={
-    var i = 0
+    var i = 0    
     var boole = false
     while(i<3){
       val list:Array[String] = db getLogin(i)
