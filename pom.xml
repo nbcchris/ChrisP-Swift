@@ -32,11 +32,22 @@
 			<artifactId>scalaz-concurrent_2.11</artifactId>
 			<version>7.2.0-M5</version>
 		</dependency>
+		  
+		  
+		  
+		<dependency>
+		  <groupId>org.scalatest</groupId>
+		  <artifactId>scalatest_2.11</artifactId>
+		  <version>2.2.4</version>
+		  <scope>test</scope>
+		</dependency>
+		
+		
    </dependencies>
   
   
   <build>
-    <sourceDirectory>src</sourceDirectory>
+    <!-- <sourceDirectory>src</sourceDirectory>
     <resources>
       <resource>
         <directory>src</directory>
@@ -44,16 +55,16 @@
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
-    </resources>
+    </resources>-->
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
+		 <plugin>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <version>3.3</version>
+	        <configuration>
+	          <source>1.8</source>
+	          <target>1.8</target>
+	        </configuration>
+	      </plugin>
       <plugin>
        		<groupId>org.apache.activemq.tooling</groupId>
 	        <artifactId>maven-activemq-plugin</artifactId>
@@ -90,6 +101,27 @@
 		         </dependency>
 		    </dependencies>           
 	      </plugin>
+	      
+	    
+	      <plugin>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest-maven-plugin</artifactId>
+			<version>1.0</version>
+			<configuration>
+			 <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+			 <junitxml>.</junitxml>
+			 <filereports>WDF TestSuite.txt</filereports>
+			</configuration>
+			<executions>
+			 <execution>
+			   <id>test</id>
+			   <goals>
+			     <goal>test</goal>
+			   </goals>
+			 </execution>
+			</executions>
+		 </plugin>
+		 
     </plugins>
   </build>
 </project>
