@@ -2,21 +2,20 @@
 
 package Application
 
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.application.JFXApp
-import scalafx.scene.Scene
-import scalafx.scene.layout.VBox
-import scalafx.scene.image.Image
 import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
+import scalafx.Includes._
+import scalafx.application.JFXApp
+import scalafx.application.JFXApp.PrimaryStage
+import scalafx.geometry.Insets
+import scalafx.scene.Scene
+import scalafx.scene.control.Button
+import scalafx.scene.control.Label
+import scalafx.scene.image.Image
+import scalafx.scene.layout.VBox
+import scalafx.scene.paint.Color._
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
-import scalafx.scene.paint.Color._
-import scalafx.scene.control.Button
-import scalafx.scene.control.Tooltip
-import scalafx.Includes._
-import scalafx.geometry.Insets
-import scalafx.scene.control.Label
 
 class Salesman(user : String) extends JFXApp {
   def build : PrimaryStage={

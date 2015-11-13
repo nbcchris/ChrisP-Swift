@@ -33,8 +33,9 @@ import scalafx.scene.paint.Stops
  * of my GUI - it leads from here to the rest of my application but retains
  * the same PrimaryStage from this object throughout the rest of the Application
  */
- 
-object GUImain extends JFXApp {
+
+
+object main extends JFXApp {
     
   val db = new LoginSQL()
   
