@@ -17,6 +17,7 @@ import scalafx.scene.control.Tooltip
 import scalafx.Includes._
 import scalafx.geometry.Insets
 import scalafx.scene.control.Label
+import scalafx.scene.image.ImageView
 
 class Index(user : String) extends JFXApp {
   def build : PrimaryStage={
@@ -26,22 +27,18 @@ class Index(user : String) extends JFXApp {
       
       scene = new Scene{
         
-       def createRect(): Rectangle ={
-          val image = new Image("file:src/images/logo-white.png")
-          val rect = new Rectangle(0,0,100,100)
-          rect setFill(new ImagePattern(image))
-          rect
-        }
-        
-        val pic = createRect
-        val test = new Button
+       def logo(): ImageView = {
+        val image = new Image("file:src/images/logo.png", 100, 100, true, true)
+        val imgview = new ImageView(image)
+        imgview
+      }
         
         fill = new LinearGradient(endX = 0,stops = Stops(SeaGreen, PaleGreen))
         content = new VBox{
           children = Seq(
             new Label {
               id = "Logo"
-              graphic = createRect
+              graphic = logo
               margin = Insets(60,200,10,200)
             },new Button {
               id = "customerOrders"

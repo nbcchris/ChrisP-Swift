@@ -4,8 +4,8 @@ package Application
 import Database.CustomerOrderSQL
 import Database.EmployeeSQL
 import Entities.CustomerOrder
-import javafx.scene.paint.ImagePattern
-import javafx.scene.shape.Rectangle
+import scalafx.scene.image.Image
+import scalafx.scene.image.ImageView
 import scalafx.Includes._
 import scalafx.Includes.handle
 import scalafx.Includes.jfxRectangle2sfx
@@ -24,8 +24,7 @@ import scalafx.scene.control.TableView
 import scalafx.scene.control.ToggleGroup
 import scalafx.scene.control.ToolBar
 import scalafx.scene.control.Tooltip
-import scalafx.scene.image.Image
-import scalafx.scene.image.Image.sfxImage2jfx
+//import scalafx.scene.image.Image.sfxImage2jfx
 import scalafx.scene.layout.HBox
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color.PaleGreen
@@ -46,16 +45,25 @@ class CustomerOrders(user : String) extends JFXApp {
   
   val empdb = new EmployeeSQL()
   val db = new CustomerOrderSQL()
-  
-  def createRect(): Rectangle ={
+  /*
+  def createRect(): ImagePane ={
     val image = new Image("file:src/images/logo.png")
     val rect = new Rectangle(0,0,80,80)
     rect setFill(new ImagePattern(image))
     rect
-  }
+  }*/
   
-  //method used to replace the PrimaryStage of the application and display new content
-  //Returns a new PrimaryStage
+  def logo: ImageView = {
+    val image = new Image("file:src/images/logo.png", 80, 80, true, true)
+    val imgview = new ImageView(image)
+    imgview
+  }
+
+  
+  /**
+  * method used to replace the PrimaryStage of the application and display new content
+  * Returns a new PrimaryStage
+  */
   def build : PrimaryStage={
     stage = new PrimaryStage {
       title = "Customer Orders"
@@ -63,28 +71,10 @@ class CustomerOrders(user : String) extends JFXApp {
       
       //Connect to the database
       val db = new CustomerOrderSQL()
-      val empdb = new EmployeeSQL()
       val orders : ObservableBuffer[CustomerOrder] = db.getOrders
-      //Pull all information about CustomerOrders and store in 'order' buffer
-
-      
 
       val table = buildTable(orders)
-       /* 
-      table.onMouseClicked = handle {
-          try{
-            coid = 
-          }catch{
-            case e : Throwable => e printStackTrace
-          }
-        }*/
-      //creates image bound
-      
-      
-      //Create Combobox and populate
-     
-      
-      //Create Toolbar
+
       val toolBar = buildTools(table)
       
       //Begin Scene construction
@@ -101,6 +91,7 @@ class CustomerOrders(user : String) extends JFXApp {
                   table
                   ,new Button {
                     text = "Show my claimed orders "
+                    prefWidth = 490
                     onAction = handle{
                       filterTable(table, orders) 
                     }
@@ -116,12 +107,19 @@ class CustomerOrders(user : String) extends JFXApp {
    stage
   }
   
+  /**
+   * filterTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder])
+   * Uses the filter function to update the table with only the Orders that belong to the current user
+   */
   def filterTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder]) : Unit = {
      val newOrders:ObservableBuffer[CustomerOrder] = filter(orders)
-     
      table.items.update(newOrders)
   }
   
+  /**
+   * filter(orders : ObservableBuffer[CustomerOrder])
+   * Filters all orders by current users order id and returns them as an ObservableBuffer of CustomerOrders
+   */
   def filter(orders : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
     val empdb = new EmployeeSQL()
     val newOrders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
@@ -174,7 +172,7 @@ class CustomerOrders(user : String) extends JFXApp {
         content = List(
           new Button {
             id = "newButton"
-            graphic = createRect
+            graphic = logo
             tooltip = Tooltip("Back to Index")
             onAction = handle {
               val a = new Index(user)
@@ -223,6 +221,10 @@ class CustomerOrders(user : String) extends JFXApp {
     toolBar
   }
   
+  /**
+   * getCoid(table : TableView[CustomerOrder])
+   * gets the CustomerOrderId for the currently selected tuple of the CustomerOrder Table
+   */
   def getCoid(table : TableView[CustomerOrder]) : Int = {
     val coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
     println(coid)

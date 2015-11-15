@@ -25,6 +25,7 @@ import scalafx.scene.paint.Color.PaleGreen
 import scalafx.scene.paint.Color.SeaGreen
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
+import scalafx.scene.image.ImageView
 
 /**
  * @author ChrisPoole
@@ -50,14 +51,12 @@ object main extends JFXApp {
     resizable = false
     
     //This is the only instance of JavaFX - Used to frame the Logo
-    def createRect(): Rectangle ={
-      val image = new Image("file:src/images/logo-white.png")
-      val rect = new Rectangle(0,0,90,90)
-      rect setFill(new ImagePattern(image))
-      rect
-    }
+    def logo: ImageView = {
+    val image = new Image("file:src/images/logo-white.png", 90, 90, true, true)
+    val imgview = new ImageView(image)
+    imgview
+  }
     
-    val pic = createRect
     
     scene = new Scene{  
       fill = new LinearGradient(endX = 0,stops = Stops(SeaGreen, PaleGreen))
@@ -118,7 +117,7 @@ object main extends JFXApp {
         )
       }
       //Add the logo to the top right of the frame
-      content += pic
+      content += logo
     }
   }
   
