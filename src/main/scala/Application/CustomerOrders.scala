@@ -41,7 +41,16 @@ import scalafx.event.ActionEvent
  * are able to claim orders to work on in other areas of the system
  */
 class CustomerOrders(user : String) extends JFXApp {
-
+  
+  val empdb = new EmployeeSQL()
+  val db = new CustomerOrderSQL()
+  
+  def createRect(): Rectangle ={
+        val image = new Image("file:src/images/logo.png")
+        val rect = new Rectangle(0,0,80,80)
+        rect setFill(new ImagePattern(image))
+        rect
+      }
   //method used to replace the PrimaryStage of the application and display new content
   //Returns a new PrimaryStage
   def build : PrimaryStage={
@@ -49,14 +58,21 @@ class CustomerOrders(user : String) extends JFXApp {
       title = "Customer Orders"
       resizable = false
       var coid = 0
+      var filtered = false
       //Connect to the database
       val db = new CustomerOrderSQL()
       val empdb = new EmployeeSQL()
       val order : ObservableBuffer[CustomerOrder] = db.getOrders
       //Pull all information about CustomerOrders and store in 'order' buffer
-      
-      val table = buildTable(order)
-       table.onMouseClicked = handle {
+
+      def filter(order : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
+        val orders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
+        for(x <- order; if(orders(x))) yield x
+      }
+
+      val table = if(filtered) buildTable(filter(order)) else buildTable(order)
+        
+      table.onMouseClicked = handle {
           try{
             coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
           }catch{
@@ -64,12 +80,7 @@ class CustomerOrders(user : String) extends JFXApp {
           }
         }
       //creates image bound
-      def createRect(): Rectangle ={
-        val image = new Image("file:src/images/logo.png")
-        val rect = new Rectangle(0,0,80,80)
-        rect setFill(new ImagePattern(image))
-        rect
-      }
+      
       
       //Create Combobox and populate
       val combo : ComboBox[String] = new ComboBox()
@@ -144,7 +155,7 @@ class CustomerOrders(user : String) extends JFXApp {
                   table
                   ,new Button {
                     text = "Show my claimed orders "
-                    val userid = empdb getId(user)
+                    filtered = false
                   }
                 //Table Creation
                //Table finished
@@ -157,8 +168,8 @@ class CustomerOrders(user : String) extends JFXApp {
    stage
   }
   
-  def buildTable(order : ObservableBuffer[CustomerOrder]): TableView[CustomerOrder]={
-    val table =  new TableView[CustomerOrder](order){
+  def buildTable(orders : ObservableBuffer[CustomerOrder]): TableView[CustomerOrder]={
+    val table =  new TableView[CustomerOrder](orders){
       columns ++= List(
         new TableColumn[CustomerOrder, Int] {
           text = "Order ID" 
@@ -179,10 +190,11 @@ class CustomerOrders(user : String) extends JFXApp {
     }
     table
   }
-  
-  val filter = (order : ObservableBuffer[CustomerOrder], id: Int) => {
-    val orders = (x : CustomerOrder) =>  x.getId % id == 0
-    for(x <- order; if(orders(x)) yield x
-  }
+  /*
+  def updateTable(table : TableView[CustomerOrder], orders : ObservableBuffer[CustomerOrder]) : Unit = {
+     orders = filter(orders)
+     
+     table.items.update(orders)
+  }*/
   
 }

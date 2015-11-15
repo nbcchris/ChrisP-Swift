@@ -5,7 +5,7 @@ import Application.CustomerOrders
 class CustomerOrdersTest extends TestBase {
   
   val tester = new CustomerOrders("")
-  
+  /*
   tester build
   
   def testBuild() {
@@ -14,5 +14,9 @@ class CustomerOrdersTest extends TestBase {
       //assert(tester.build.equals(tester.build))
     }
   }
-  testBuild
+  testBuild*/
+  
+  def testFilter(){
+    
+  }
 }

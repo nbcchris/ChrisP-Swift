@@ -28,6 +28,12 @@ object HelloWorld {
     
     val daisy = new Dalmatian()
     daisy grow
-  } 
+  }
+  
+  
+  val filter = (xs : List[Int]) => {
+    val order = (x: Int) => x%2==0
+    for(x <- xs; if(order(x))) yield x
+  }
 }
 
