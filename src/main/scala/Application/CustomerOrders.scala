@@ -6,6 +6,7 @@ import Database.EmployeeSQL
 import Entities.CustomerOrder
 import javafx.scene.paint.ImagePattern
 import javafx.scene.shape.Rectangle
+import scalafx.Includes._
 import scalafx.Includes.handle
 import scalafx.Includes.jfxRectangle2sfx
 import scalafx.application.JFXApp
@@ -32,6 +33,7 @@ import scalafx.scene.paint.Color.SeaGreen
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
 import scalafx.event.ActionEvent
+import scalafx.scene.Node
 
 
 /**
@@ -46,100 +48,44 @@ class CustomerOrders(user : String) extends JFXApp {
   val db = new CustomerOrderSQL()
   
   def createRect(): Rectangle ={
-        val image = new Image("file:src/images/logo.png")
-        val rect = new Rectangle(0,0,80,80)
-        rect setFill(new ImagePattern(image))
-        rect
-      }
+    val image = new Image("file:src/images/logo.png")
+    val rect = new Rectangle(0,0,80,80)
+    rect setFill(new ImagePattern(image))
+    rect
+  }
+  
   //method used to replace the PrimaryStage of the application and display new content
   //Returns a new PrimaryStage
   def build : PrimaryStage={
     stage = new PrimaryStage {
       title = "Customer Orders"
       resizable = false
-      var coid = 0
-      var filtered = false
+      
       //Connect to the database
       val db = new CustomerOrderSQL()
       val empdb = new EmployeeSQL()
-      val order : ObservableBuffer[CustomerOrder] = db.getOrders
+      val orders : ObservableBuffer[CustomerOrder] = db.getOrders
       //Pull all information about CustomerOrders and store in 'order' buffer
 
-      def filter(order : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
-        val orders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
-        for(x <- order; if(orders(x))) yield x
-      }
+      
 
-      val table = if(filtered) buildTable(filter(order)) else buildTable(order)
-        
+      val table = buildTable(orders)
+       /* 
       table.onMouseClicked = handle {
           try{
-            coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
+            coid = 
           }catch{
             case e : Throwable => e printStackTrace
           }
-        }
+        }*/
       //creates image bound
       
       
       //Create Combobox and populate
-      val combo : ComboBox[String] = new ComboBox()
-      val options : ObservableBuffer[String] = ObservableBuffer[String]()
-        options += "Picked"
-        options += "Packed"
-        options += "Dispatched"
-        options += "Complete"
-      combo.promptText = "Pick a Status"
-      combo.items = options
+     
       
       //Create Toolbar
-      val toolBar = new ToolBar {
-        content = List(
-          new Button {
-            id = "newButton"
-            graphic = createRect
-            tooltip = Tooltip("Back to Index")
-            onAction = handle {
-              val a = new Index(user)
-              stage = a build
-            }
-          },
-          new Button {
-            id = "viewOrder"
-            text = "View Order"
-            onMouseClicked = handle{
-              val a = new Order(user, coid)
-              stage = a build
-            }
-          },
-          new Button {
-            id = "claim"
-            text = "Claim Order"
-            onMouseClicked = handle {
-              val userid = empdb getId(user)
-              db claim(coid, userid)
-              val a = new CustomerOrders(user)
-              stage = a build
-            }
-          },
-          new Separator {
-            orientation = Orientation.VERTICAL
-          },
-          combo,
-          new Button {
-            id = "changeStatus"
-            text = "Change Status"
-            onMouseClicked = handle {
-              val selected = combo.value.value
-              if(selected != null){
-                db updateStatus(coid,selected)
-                val a = new CustomerOrders(user)
-                stage = a build
-              }
-            }
-          }
-        )
-      }
+      val toolBar = buildTools(table)
       
       //Begin Scene construction
       scene = new Scene {
@@ -155,7 +101,8 @@ class CustomerOrders(user : String) extends JFXApp {
                   table
                   ,new Button {
                     text = "Show my claimed orders "
-                    filtered = false
+                    //val newOrders: ObservableBuffer[CustomerOrder] = filter(orders)
+                    //updateTable(table, orders)
                   }
                 //Table Creation
                //Table finished
@@ -166,6 +113,17 @@ class CustomerOrders(user : String) extends JFXApp {
       }  
     }
    stage
+  }
+  
+  def filterTable(table : TableView[CustomerOrder], order: ObservableBuffer[CustomerOrder]) : Unit = {
+     val newOrders:ObservableBuffer[CustomerOrder] = filter(order)
+     
+     table.items.update(newOrders)
+  }
+  
+  def filter(order : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
+    val orders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
+    for(x <- order; if(orders(x))) yield x
   }
   
   def buildTable(orders : ObservableBuffer[CustomerOrder]): TableView[CustomerOrder]={
@@ -190,11 +148,83 @@ class CustomerOrders(user : String) extends JFXApp {
     }
     table
   }
-  /*
-  def updateTable(table : TableView[CustomerOrder], orders : ObservableBuffer[CustomerOrder]) : Unit = {
-     orders = filter(orders)
-     
-     table.items.update(orders)
-  }*/
   
+  def updateTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder]){
+    table.items.update(orders)
+  }
+  
+  def buildCombo : ComboBox[String] = {
+     val combo : ComboBox[String] = new ComboBox()
+      val options : ObservableBuffer[String] = ObservableBuffer[String]()
+        options += "Picked"
+        options += "Packed"
+        options += "Dispatched"
+        options += "Complete"
+      combo.promptText = "Pick a Status"
+      combo.items = options
+      
+      combo
+  }
+  
+  def buildTools( table : TableView[CustomerOrder]) : ToolBar = {
+    val combo = buildCombo
+    val toolBar = new ToolBar {
+        content = List(
+          new Button {
+            id = "newButton"
+            graphic = createRect
+            tooltip = Tooltip("Back to Index")
+            onAction = handle {
+              val a = new Index(user)
+              stage = a build
+            }
+          },
+          new Button {
+            id = "viewOrder"
+            text = "View Order"
+            onMouseClicked = handle{
+              val a = new Order(user, getCoid(table))
+              stage = a build
+            }
+          },
+          new Button {
+            id = "claim"
+            text = "Claim Order"
+            onMouseClicked = handle {
+              val empdb = new EmployeeSQL()
+              val db = new CustomerOrderSQL()
+              val userid = empdb getId(user)
+              println(getCoid(table))
+              db claim(getCoid(table), userid)
+              updateTable(table, db getOrders)
+            }
+          },
+          new Separator {
+            orientation = Orientation.VERTICAL
+          },
+          combo,
+          new Button {
+            id = "changeStatus"
+            text = "Change Status"
+            onMouseClicked = handle {
+              val selected = combo.value.value
+              if(selected != null){
+                db updateStatus(getCoid(table),selected)
+                val a = new CustomerOrders(user)
+                stage = a build
+              }
+            }
+          }
+        )
+      }
+      
+    toolBar
+  }
+  
+  def getCoid(table : TableView[CustomerOrder]) : Int = {
+    val coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
+    println(coid)
+    coid
+  }
+
 }
