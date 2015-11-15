@@ -101,8 +101,9 @@ class CustomerOrders(user : String) extends JFXApp {
                   table
                   ,new Button {
                     text = "Show my claimed orders "
-                    //val newOrders: ObservableBuffer[CustomerOrder] = filter(orders)
-                    //updateTable(table, orders)
+                    onAction = handle{
+                      filterTable(table, orders) 
+                    }
                   }
                 //Table Creation
                //Table finished
@@ -115,15 +116,16 @@ class CustomerOrders(user : String) extends JFXApp {
    stage
   }
   
-  def filterTable(table : TableView[CustomerOrder], order: ObservableBuffer[CustomerOrder]) : Unit = {
-     val newOrders:ObservableBuffer[CustomerOrder] = filter(order)
+  def filterTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder]) : Unit = {
+     val newOrders:ObservableBuffer[CustomerOrder] = filter(orders)
      
      table.items.update(newOrders)
   }
   
-  def filter(order : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
-    val orders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
-    for(x <- order; if(orders(x))) yield x
+  def filter(orders : ObservableBuffer[CustomerOrder]): ObservableBuffer[CustomerOrder] = {
+    val empdb = new EmployeeSQL()
+    val newOrders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
+    for(x <- orders; if(newOrders(x))) yield x
   }
   
   def buildTable(orders : ObservableBuffer[CustomerOrder]): TableView[CustomerOrder]={
