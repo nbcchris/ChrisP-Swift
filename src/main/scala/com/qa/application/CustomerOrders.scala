@@ -87,7 +87,7 @@ class CustomerOrders(user : String) extends JFXApp {
               children = Seq(
                   table
                   ,new Button {
-                    text = "Show my claimed orders "
+                    text = "Show my claimed Customer Orders"
                     prefWidth = 490
                     onAction = handle{
                       filterTable(table, orders) 
