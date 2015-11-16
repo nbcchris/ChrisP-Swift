@@ -23,10 +23,14 @@ import scalafx.geometry.Pos
 import scalafx.collections.ObservableBuffer
 import com.qa.database.ProductSQL
 
+/**
+ * @author ChrisPoole
+ * 
+ * POrder displays a given ProductOrder and uses ProductOrderLines to access the
+ * multiple products in the ProductOrder, accessible through a ComboBox selector
+ * 
+ */
 class POrder (user : String, orderId_ : Int) extends JFXApp{
-  
-  
-  
   
   def build : PrimaryStage={
     stage = new PrimaryStage {

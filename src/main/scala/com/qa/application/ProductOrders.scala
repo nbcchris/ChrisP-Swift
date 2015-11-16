@@ -38,6 +38,8 @@ import scalafx.scene.image.ImageView
 /**
  * @author ChrisPoole
  * 
+ * ProductOrders is the page containing a list of all Product Orders where Employees
+ * are able to claim orders to work on in other areas of the system
  * 
  */
 class ProductOrders(user : String) extends JFXApp {

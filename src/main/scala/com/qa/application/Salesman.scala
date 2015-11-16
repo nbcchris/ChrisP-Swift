@@ -17,6 +17,13 @@ import scalafx.scene.paint.Color._
 import scalafx.scene.paint.LinearGradient
 import scalafx.scene.paint.Stops
 
+/**
+ * @author ChrisPoole
+ * 
+ * TODO: Salesman is the page that will contain the Travelling Salesman Algorithm
+ * 
+ */
+
 class Salesman(user : String) extends JFXApp {
   def build : PrimaryStage={
     stage = new PrimaryStage {

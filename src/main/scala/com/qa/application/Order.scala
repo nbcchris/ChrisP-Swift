@@ -23,6 +23,13 @@ import scalafx.geometry.Pos
 import scalafx.collections.ObservableBuffer
 import com.qa.database.ProductSQL
 
+/**
+ * @author ChrisPoole
+ * 
+ * Order displays a given CustomerOrder and uses CustomerOrderLines to access the
+ * multiple products in the CustomerOrder, accessible through a ComboBox selector
+ * 
+ */
 class Order (user : String, orderId_ : Int) extends JFXApp{
   
   

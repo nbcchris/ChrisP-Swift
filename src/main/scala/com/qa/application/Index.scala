@@ -19,6 +19,14 @@ import scalafx.geometry.Insets
 import scalafx.scene.control.Label
 import scalafx.scene.image.ImageView
 
+
+/**
+ * @author ChrisPoole
+ * 
+ * Index functions as a landing page post Log in
+ * It contains a list of the pages in the system as menu options (Buttons)
+ * This page is responsible for navigation between different pages in the system
+ */
 class Index(user : String) extends JFXApp {
   def build : PrimaryStage={
     stage = new PrimaryStage {
@@ -28,7 +36,7 @@ class Index(user : String) extends JFXApp {
       scene = new Scene{
         
        def logo(): ImageView = {
-        val image = new Image("file:src/images/logo-white.png", 100, 100, true, true)
+        val image = new Image("file:src/images/logo-white.png", 125, 125, true, true)
         val imgview = new ImageView(image)
         imgview
       }
@@ -39,7 +47,7 @@ class Index(user : String) extends JFXApp {
             new Label {
               id = "Logo"
               graphic = logo
-              margin = Insets(60,200,10,200)
+              margin = Insets(60,200,10,184)
             },new Button {
               id = "customerOrders"
               minWidth = 200

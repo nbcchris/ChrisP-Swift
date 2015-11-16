@@ -52,7 +52,7 @@ object main extends JFXApp {
     
     //This is the only instance of JavaFX - Used to frame the Logo
     def logo: ImageView = {
-    val image = new Image("file:src/images/logo-white.png", 90, 90, true, true)
+    val image = new Image("file:src/images/logo-white.png", 125, 125, true, true)
     val imgview = new ImageView(image)
     imgview
   }
@@ -66,7 +66,7 @@ object main extends JFXApp {
           margin=Insets(10)
         }
       
-      var passField = new PasswordField{
+      val passField = new PasswordField{
           text = "pass"
           promptText = "Password"
           margin=Insets(10)
@@ -121,7 +121,11 @@ object main extends JFXApp {
     }
   }
   
-  //This method uses the data from the database to verify the users input 
+  /**
+   * @Param user - the username to assess password in database
+   * @Param pass - the password provided by the user to be verified by the SQL pull
+   * This method uses the data from the database to verify the users input 
+   */
   def verifyLogin(user: String, pass: String):Boolean={
     if(db.getPass(user).equals(pass)) true else false
   }
