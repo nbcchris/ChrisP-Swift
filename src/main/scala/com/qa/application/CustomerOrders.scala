@@ -260,7 +260,6 @@ class CustomerOrders(user : String) extends JFXApp {
    */
   def getCoid(table : TableView[CustomerOrder]) : Int = {
     val coid = table.getSelectionModel.selectedItemProperty.get.customerOrderId.value
-    println(coid)
     coid
   }
 

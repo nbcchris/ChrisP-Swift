@@ -12,4 +12,19 @@ class CustomerOrderTest extends TestBase{
     cO.employeeId.value should be (2)
     cO.status.value should be ("Test")
   }
+   
+   def testGetId {
+     "getId" should "return an EmployeeId as an Integer" in{
+       val cO = new CustomerOrder(1,1,"Test")
+       
+       cO.getId should be (1)
+     }
+     it should "return the correct EmployeeId" in {
+       val cO = new CustomerOrder(1,5,"Test")
+       
+       cO.getId should be (5)
+     }
+   }
+   
+   testGetId
 }
