@@ -34,9 +34,16 @@ class ProductOrderSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT productorderid, employee_employeeid, status FROM productorder WHERE productorderid ="+orderId)
-      while ( resultSet next ) {
+      
+      def getResults(){
+       if (resultSet next()){
          oList += new ProductOrder(resultSet.getInt(1),resultSet.getInt(2), resultSet.getString(3))
+         getResults
+        }
       }
+      
+      getResults
+     
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     oList(0)
@@ -49,9 +56,16 @@ class ProductOrderSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT product_productid FROM productorderline WHERE productorder_productorderid ="+orderId)
-      while ( resultSet next ) {
+      
+      def getResults(){
+       if (resultSet next()){
          oList += resultSet.getInt(1)
+         getResults
+        }
       }
+      
+      getResults
+      
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     

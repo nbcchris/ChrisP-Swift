@@ -20,9 +20,16 @@ class ProductSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT productid, name, price FROM product WHERE productid ="+productId)
-      while ( resultSet next ) {
+      
+      def getResults(){
+       if (resultSet next()){
          p += new Product(resultSet.getInt(1),resultSet.getString(2), resultSet.getFloat(3))
+         getResults
+        }
       }
+      
+      getResults
+     
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     p(0)

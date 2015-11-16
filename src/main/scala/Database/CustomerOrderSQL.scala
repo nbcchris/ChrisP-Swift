@@ -22,10 +22,16 @@ class CustomerOrderSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT customerorderid, employee_employeeid, status FROM customerorder")
-      while ( resultSet next ) {
-        oList += new CustomerOrder(resultSet.getInt(1),resultSet.getInt(2), resultSet.getString(3))
+      
+      def getResults(){
+       if (resultSet next()){
+         oList += new CustomerOrder(resultSet.getInt(1),resultSet.getInt(2), resultSet.getString(3))
+         getResults
+        }
       }
-      connection close()
+      
+      getResults
+      
     } catch { case e : Throwable => e printStackTrace }
     oList
   }
@@ -36,9 +42,16 @@ class CustomerOrderSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT customerorderid, employee_employeeid, status FROM customerorder WHERE customerorderid ="+orderId)
-      while ( resultSet next ) {
+      
+      def getResults(){
+       if (resultSet next()){
          oList += new CustomerOrder(resultSet.getInt(1),resultSet.getInt(2), resultSet.getString(3))
+         getResults
+        }
       }
+      
+      getResults
+     
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     oList(0)
@@ -51,9 +64,15 @@ class CustomerOrderSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT product_productid FROM customerorderline WHERE customerorder_customerorderid ="+orderId)
-      while ( resultSet next ) {
+      def getResults(){
+       if (resultSet next()){
          oList += resultSet.getInt(1)
+         getResults
+        }
       }
+      
+      getResults
+     
       connection close()
     } catch { case e : Throwable => e printStackTrace }
     

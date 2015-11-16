@@ -28,7 +28,7 @@ class Index(user : String) extends JFXApp {
       scene = new Scene{
         
        def logo(): ImageView = {
-        val image = new Image("file:src/images/logo.png", 100, 100, true, true)
+        val image = new Image("file:src/images/logo-white.png", 100, 100, true, true)
         val imgview = new ImageView(image)
         imgview
       }

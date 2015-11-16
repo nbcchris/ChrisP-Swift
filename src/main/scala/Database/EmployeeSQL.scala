@@ -19,9 +19,16 @@ class EmployeeSQL {
     try {
       val statement = connection createStatement()
       val resultSet = statement.executeQuery("SELECT employeeid FROM employee WHERE username ='"+user+"'")
-      while ( resultSet next ) {
+      
+      def getResults(){
+       if (resultSet next()){
          oList += resultSet.getInt(1)
+         getResults
+        }
       }
+      
+      getResults
+      
       connection close
     } catch { case e : Throwable => e printStackTrace }
     

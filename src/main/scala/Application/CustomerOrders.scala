@@ -45,13 +45,7 @@ class CustomerOrders(user : String) extends JFXApp {
   
   val empdb = new EmployeeSQL()
   val db = new CustomerOrderSQL()
-  /*
-  def createRect(): ImagePane ={
-    val image = new Image("file:src/images/logo.png")
-    val rect = new Rectangle(0,0,80,80)
-    rect setFill(new ImagePattern(image))
-    rect
-  }*/
+
   
   def logo: ImageView = {
     val image = new Image("file:src/images/logo.png", 80, 80, true, true)
@@ -126,6 +120,10 @@ class CustomerOrders(user : String) extends JFXApp {
     for(x <- orders; if(newOrders(x))) yield x
   }
   
+  /**
+   * buildTable(orders : ObservableBuffer[CustomerOrder])
+   * Builds the table from a list of CustomerOrder object
+   */
   def buildTable(orders : ObservableBuffer[CustomerOrder]): TableView[CustomerOrder]={
     val table =  new TableView[CustomerOrder](orders){
       columns ++= List(
@@ -149,10 +147,18 @@ class CustomerOrders(user : String) extends JFXApp {
     table
   }
   
+  /**
+   * updateTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder])
+   * Refreshes the table
+   */
   def updateTable(table : TableView[CustomerOrder], orders: ObservableBuffer[CustomerOrder]){
     table.items.update(orders)
   }
   
+  /**
+   * buildCombo()
+   * Builds the combo box for Status selection
+   */
   def buildCombo : ComboBox[String] = {
      val combo : ComboBox[String] = new ComboBox()
       val options : ObservableBuffer[String] = ObservableBuffer[String]()
@@ -166,6 +172,10 @@ class CustomerOrders(user : String) extends JFXApp {
       combo
   }
   
+  /**
+   * buildTools( table : TableView[CustomerOrder])
+   * Builds the Toolbar, uses table as an argument to provide functionality to table data
+   */
   def buildTools( table : TableView[CustomerOrder]) : ToolBar = {
     val combo = buildCombo
     val toolBar = new ToolBar {
