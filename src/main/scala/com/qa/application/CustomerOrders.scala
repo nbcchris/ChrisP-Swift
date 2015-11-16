@@ -43,16 +43,19 @@ import scalafx.scene.Node
  */
 class CustomerOrders(user : String) extends JFXApp {
   
-  val empdb = new EmployeeSQL()
-  val db = new CustomerOrderSQL()
-
   
+  /**
+   * Constructs the Logo using an image file
+   */
   def logo: ImageView = {
     val image = new Image("file:src/images/logo.png", 80, 80, true, true)
     val imgview = new ImageView(image)
     imgview
   }
 
+  
+  
+  
   
   /**
   * method used to replace the PrimaryStage of the application and display new content
@@ -101,6 +104,9 @@ class CustomerOrders(user : String) extends JFXApp {
    stage
   }
   
+  
+  
+  
   /**
    * @Param table - the table to be update with filtered orders
    * @param orders - the orders to be filtered
@@ -111,6 +117,9 @@ class CustomerOrders(user : String) extends JFXApp {
      table.items.update(newOrders)
   }
   
+  
+  
+  
   /**
    * @Param orders - an ObservableBuffer of customerOrders to be filtered
    * Filters all orders by current users order id and returns them as an ObservableBuffer of CustomerOrders
@@ -120,6 +129,9 @@ class CustomerOrders(user : String) extends JFXApp {
     val newOrders = (x : CustomerOrder) =>  x.getId % empdb.getId(user) == 0
     for(x <- orders; if(newOrders(x))) yield x
   }
+  
+  
+  
   
   /**
    * @Param orders - an ObservableBuffer of customerOrders to be placed in tableView
@@ -148,6 +160,9 @@ class CustomerOrders(user : String) extends JFXApp {
     table
   }
   
+  
+  
+  
   /**
    * @Param table  - the table to be updated
    * @Param orders - the orders to place in the table
@@ -174,11 +189,15 @@ class CustomerOrders(user : String) extends JFXApp {
       combo
   }
   
+  
+  
+  
   /**
    * @Param table - the table that the toolbar will provide functionality for
    * Builds the Toolbar, uses table as an argument to provide functionality to table data
    */
   def buildTools( table : TableView[CustomerOrder]) : ToolBar = {
+    val db = new CustomerOrderSQL()
     val combo = buildCombo
     val toolBar = new ToolBar {
         content = List(
@@ -232,6 +251,8 @@ class CustomerOrders(user : String) extends JFXApp {
       
     toolBar
   }
+  
+  
   
   /**
    * @Param table - the table whose selected value will be returned
