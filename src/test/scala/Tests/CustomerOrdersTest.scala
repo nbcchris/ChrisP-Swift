@@ -1,6 +1,6 @@
 package Tests
 
-import Application.CustomerOrders
+import com.qa.application.CustomerOrders
 
 class CustomerOrdersTest extends TestBase {
   

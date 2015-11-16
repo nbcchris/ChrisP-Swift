@@ -1,6 +1,6 @@
 package Tests
 
-import Database.EmployeeSQL
+import com.qa.database.EmployeeSQL
 
 class EmployeeSQLTest {
   
